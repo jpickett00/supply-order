@@ -14,7 +14,7 @@ const express = require('express');
 const app = express();
 
 // Serve static files (e.g., index.html)
-app.use(express.static('public')); // or your folder name
+app.use(express.static('index.html')); // or your folder name
 
 // Default route
 app.get('/', (req, res) => {

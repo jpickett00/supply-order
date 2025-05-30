@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR Code Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    #reader { width: 300px; margin: auto; }
+    #message { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>QR Code Scanner</h1>
+  <div id="reader"></div>
+  <div id="message"></div>
+
+  <script>
+    function showMessage(text, success = true) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.textContent = text;
+      msgDiv.style.color = success ? 'green' : 'red';
+    }
+
+    function sendToServer(text) {
+      fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      })
+      .then(res => res.json())
+      .then(data => showMessage('Uploaded: ' + text))
+      .catch(err => showMessage('Error: ' + err.message, false));
+    }
+
+    const qr = new Html5Qrcode("reader");
+    qr.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      text => {
+        qr.stop(); // stop scanning after first scan
+        sendToServer(text);
+      },
+      error => {}
+    );
+  </script>
+</body>
+</html>

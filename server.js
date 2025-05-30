@@ -10,6 +10,22 @@ const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const worksheetName = process.env.WORKSHEET_NAME;
+const express = require('express');
+const app = express();
+
+// Serve static files (e.g., index.html)
+app.use(express.static('public')); // or your folder name
+
+// Default route
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// Render expects you to use process.env.PORT
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 let accessToken = '';
 

@@ -2,7 +2,6 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 require('dotenv').config();
 
-const app = express();
 app.use(bodyParser.json());
 
 const tenantId = process.env.TENANT_ID;
@@ -75,8 +74,3 @@ app.post('/upload', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log('Server running on port $ {PORT}');
-});

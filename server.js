@@ -1,13 +1,13 @@
-const express = require('express');
+import express, { static } from 'express';
 const app = express();
 app.get('/', (req, res) => {
-  res.send('Hello World');
+    res.send('Hello World');
 });
-const bodyParser = require('body-parser');
-const axios = require('axios');
+import { json } from 'body-parser';
+import { post } from 'axios';
 require('dotenv').config();
 
-app.use(bodyParser.json());
+app.use(json());
 
 const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;

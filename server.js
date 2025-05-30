@@ -1,4 +1,8 @@
+const express = require('express');
 const app = express();
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
 const bodyParser = require('body-parser');
 const axios = require('axios');
 require('dotenv').config();

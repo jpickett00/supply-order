@@ -1,81 +1,79 @@
-import express, { static } from 'express';
-const app = express();
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+// Import packages at the top
+import express, { static as expressStatic } from 'express';
 import { json } from 'body-parser';
 import { post } from 'axios';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
+// Create Express app
+const app = express();
 app.use(json());
 
+// Serve static files (like index.html) from "public" folder
+app.use(expressStatic('public'));
+
+// Route to serve the HTML file
+app.get('/', (req, res) => {
+  res.sendFile(process.cwd() + '/public/index.html'); // Assumes HTML is in a "public" folder
+});
+
+// Load environment variables
 const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const worksheetName = process.env.WORKSHEET_NAME;
-const express = require('express');
-
-
-// Serve static files (e.g., index.html)
-app.use(express.static('index.html')); // or your folder name
-
-// Default route
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
-// Render expects you to use process.env.PORT
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
 let accessToken = '';
 
-// Function to get an access token
+// Get access token from Microsoft
 async function getAccessToken() {
-    const response = await axios.post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-        new URLSearchParams({
-            client_id: clientId,
-            scope: 'https://graph.microsoft.com/.default',
-            client_secret: clientSecret,
-            grant_type: 'client_credentials'
-        })
-    );
-    accessToken = response.data.access_token;
+  const response = await post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+    new URLSearchParams({
+      client_id: clientId,
+      scope: 'https://graph.microsoft.com/.default',
+      client_secret: clientSecret,
+      grant_type: 'client_credentials'
+    })
+  );
+  accessToken = response.data.access_token;
 }
 
-// Function to add scanned data to Excel
+// Add QR text and timestamp to Excel
 async function addToExcel(text) {
-    const timestamp = new Date().toLocaleString();
-    await getAccessToken();
+  const timestamp = new Date().toLocaleString();
+  await getAccessToken();
 
-    // Try to add a table (if it already exists, ignore the error)
-    await axios.post(
-        `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
-        { address: 'A1:B1', hasHeaders: true },
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-    ).catch(() => {}); // Ignore if table already exists
+  // Try to add table (if it exists, skip)
+  await post(
+    `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
+    { address: 'A1:B1', hasHeaders: true },
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  ).catch(() => {}); // Ignore if table already exists
 
-    // Add a new row with scanned text and timestamp
-    const res = await axios.post(
-        `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
-        { values: [[text, timestamp]] },
-        { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' } }
-    );
+  // Add row
+  const res = await post(
+    `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
+    { values: [[text, timestamp]] },
+    { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' } }
+  );
 
-    return res.status;
+  return res.status;
 }
 
-// Endpoint to receive QR text from frontend
+// Receive QR text from frontend
 app.post('/upload', async (req, res) => {
-    const { text } = req.body;
-    try {
-        await addToExcel(text);
-        res.json({ message: 'QR code text uploaded to Excel successfully!' });
-    } catch (err) {
-        console.error(err.response?.data || err.message);
-        res.status(500).json({ message: 'Failed to upload to Excel.' });
-    }
+  const { text } = req.body;
+  try {
+    await addToExcel(text);
+    res.json({ message: 'QR code text uploaded to Excel successfully!' });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ message: 'Failed to upload to Excel.' });
+  }
 });
 
+// Start server (Render uses process.env.PORT)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});

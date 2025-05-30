@@ -1,6 +1,7 @@
 // Import packages at the top
 import express, { static as expressStatic } from 'express';
 import { json } from 'body-parser';
+const json = bodyParser.json;
 import { post } from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();

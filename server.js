@@ -1,21 +1,29 @@
-// Import packages at the top
-import express, { static as expressStatic } from 'express';
-import bodyParser from "bodyParser.json"
-const json = bodyParser.json;
+// Import packages
+import express from 'express';
+import pkg from 'body-parser';
 import { post } from 'axios';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Enable environment variables
 dotenv.config();
 
-// Create Express app
+// Setup __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Initialize express app
 const app = express();
+const { json } = pkg;
 app.use(json());
 
-// Serve static files (like index.html) from "public" folder
-app.use(expressStatic('public'));
+// Serve static files from 'public'
+app.use(express.static('public'));
 
-// Route to serve the HTML file
+// Serve index.html from /public
 app.get('/', (req, res) => {
-  res.sendFile(process.cwd() + '/public/index.html'); // Assumes HTML is in a "public" folder
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Load environment variables
@@ -26,42 +34,48 @@ const worksheetName = process.env.WORKSHEET_NAME;
 
 let accessToken = '';
 
-// Get access token from Microsoft
+// Fetch Microsoft access token
 async function getAccessToken() {
-  const response = await post(`https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+  const response = await post(
+    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
     new URLSearchParams({
       client_id: clientId,
       scope: 'https://graph.microsoft.com/.default',
       client_secret: clientSecret,
-      grant_type: 'client_credentials'
+      grant_type: 'client_credentials',
     })
   );
   accessToken = response.data.access_token;
 }
 
-// Add QR text and timestamp to Excel
+// Upload QR data to Excel
 async function addToExcel(text) {
   const timestamp = new Date().toLocaleString();
   await getAccessToken();
 
-  // Try to add table (if it exists, skip)
+  // Try to add table (ignore error if it exists)
   await post(
     `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
-  ).catch(() => {}); // Ignore if table already exists
+  ).catch(() => {});
 
-  // Add row
+  // Add a row
   const res = await post(
     `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
     { values: [[text, timestamp]] },
-    { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' } }
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }
   );
 
   return res.status;
 }
 
-// Receive QR text from frontend
+// API endpoint
 app.post('/upload', async (req, res) => {
   const { text } = req.body;
   try {
@@ -73,7 +87,7 @@ app.post('/upload', async (req, res) => {
   }
 });
 
-// Start server (Render uses process.env.PORT)
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);

@@ -61,7 +61,7 @@ async function addToExcel(text) {
   ).catch(err => {
     console.error('Table creation error:', err?.response?.dta || err.message);
   });
-  }
+  
 
   // Add a row
   const res = await axios.post(

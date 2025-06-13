@@ -1,6 +1,6 @@
 // Import packages
 import express from 'express';
-import bodyParser from 'body-parser';
+import pkg from 'body-parser';
 import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';

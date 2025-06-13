@@ -1,6 +1,7 @@
 // Import packages
 import express from 'express';
-import pkg from 'body-parser';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -16,7 +17,8 @@ const __dirname = path.dirname(__filename);
 // Initialize express app
 const app = express();
 const { json } = pkg;
-app.use(json());
+app.use(cors());
+app.use(bodyParser.json());
 
 // Serve static files from 'public'
 app.use(express.static('public'));
@@ -82,8 +84,8 @@ async function addToExcel(text) {
 app.post('/upload', async (req, res) => {
   const { text } = req.body;
   try {
-    await addToExcel(text);
-    res.json({ message: 'QR code text uploaded to Excel successfully!' });
+    const status = await addToExcel(text);
+    res.status(200).json({success: true, status});
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ message: 'Failed to upload to Excel.' });

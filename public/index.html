@@ -21,7 +21,7 @@
     }
 
     function sendToServer(text) {
-      fetch('https://supply-order.onrender.com /upload', {
+      fetch('https://supply-order.onrender.com/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })

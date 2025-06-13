@@ -1,7 +1,7 @@
 // Import packages
 import express from 'express';
 import pkg from 'body-parser';
-import { post } from 'axios';
+import axios from 'axios';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -36,7 +36,7 @@ let accessToken = '';
 
 // Fetch Microsoft access token
 async function getAccessToken() {
-  const response = await post(
+  const response = await axios.post(
     `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
     new URLSearchParams({
       client_id: clientId,
@@ -54,14 +54,14 @@ async function addToExcel(text) {
   await getAccessToken();
 
   // Try to add table (ignore error if it exists)
-  await post(
+  await axios.post(
     `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(() => {});
 
   // Add a row
-  const res = await post(
+  const res = await axios.post(
     `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
     { values: [[text, timestamp]] },
     {
@@ -76,7 +76,7 @@ async function addToExcel(text) {
 }
 
 // API endpoint
-app.post('/upload', async (req, res) => {
+app.axios.post('/upload', async (req, res) => {
   const { text } = req.body;
   try {
     await addToExcel(text);

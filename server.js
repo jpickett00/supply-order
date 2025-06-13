@@ -53,6 +53,7 @@ async function getAccessToken() {
 async function addToExcel(text) {
   const timestamp = new Date().toLocaleString();
   await getAccessToken();
+  console.log(`Uploading to: QRData.xlsx → worksheet '${worksheetName}'`);
 
   // Try to add table (ignore error if it exists)
   await axios.post(

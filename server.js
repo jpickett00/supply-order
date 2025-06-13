@@ -59,7 +59,7 @@ async function addToExcel(text) {
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {
-    console.error('Table creation erre:', err?.response?.dta || err.message);
+    console.error('Table creation error:', err?.response?.dta || err.message);
   });
   }
 

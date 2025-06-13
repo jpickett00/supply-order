@@ -58,7 +58,10 @@ async function addToExcel(text) {
     `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
-  ).catch(() => {});
+  ).catch(err => {
+    console.error('Table creation erre:', err?.response?.dta || err.message);
+  });
+  }
 
   // Add a row
   const res = await axios.post(

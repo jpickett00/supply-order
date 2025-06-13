@@ -79,7 +79,7 @@ async function addToExcel(text) {
 }
 
 // API endpoint
-app.axios.post('/upload', async (req, res) => {
+app.post('/upload', async (req, res) => {
   const { text } = req.body;
   try {
     await addToExcel(text);

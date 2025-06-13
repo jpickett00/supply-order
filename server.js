@@ -16,7 +16,6 @@ const __dirname = path.dirname(__filename);
 
 // Initialize express app
 const app = express();
-const { json } = pkg;
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -61,9 +60,8 @@ async function addToExcel(text) {
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {
-    console.error('Table creation error:', err?.response?.dta || err.message);
+    console.error('Table creation error:', err?.response?.data || err.message);
   });
-  
 
   // Add a row
   const res = await axios.post(
@@ -85,7 +83,7 @@ app.post('/upload', async (req, res) => {
   const { text } = req.body;
   try {
     const status = await addToExcel(text);
-    res.status(200).json({success: true, status});
+    res.status(200).json({ success: true, status });
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ message: 'Failed to upload to Excel.' });

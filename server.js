@@ -60,15 +60,15 @@ async function addToExcel(text) {
 
   // Add row
   const res = await axios.post(
-    'https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables('068431C4-2B7E-41E5-A544-1E2279F392B1')/rows/add',
-    { values: [[text, timestamp]] },
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables('068431C4-2B7E-41E5-A544-1E2279F392B1')/rows/add`,
+  { values: [[text, timestamp]] },
+  {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  }
+);
 
   return res.status;
 }

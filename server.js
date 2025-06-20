@@ -57,8 +57,8 @@ async function addToExcel(text) {
 
   // Try to add table (ignore error if it exists)
   await axios.post(
-    https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/...
-    { address: 'A1:B1', hasHeaders: true },
+    'https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/...'
+    { address: 'A2:B2', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {
     console.error('Table creation error:', err?.response?.data || err.message);
@@ -66,7 +66,7 @@ async function addToExcel(text) {
 
   // Add a row
   const res = await axios.post(
-    `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
+    `https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
     { values: [[text, timestamp]] },
     {
       headers: {

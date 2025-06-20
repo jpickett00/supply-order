@@ -33,6 +33,7 @@ const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const worksheetName = process.env.WORKSHEET_NAME;
 const userID = process.env.USER_ID;
+const driveRoot = process.env.USE_ME_ENDPOINT === 'true' ? 'me' : 'users/${userID}';
 
 let accessToken = '';
 
@@ -58,7 +59,7 @@ async function addToExcel(text) {
 
   // Create table (ignore if it already exists)
   await axios.post(
-    `https://graph.microsoft.com/v1.0/users/${userID}/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
+    `https://graph.microsoft.com/v1.0/users/${driveRoot}/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {
@@ -67,7 +68,7 @@ async function addToExcel(text) {
 
   // Add row
   const res = await axios.post(
-    `https://graph.microsoft.com/v1.0/users/${userID}/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
+    `https://graph.microsoft.com/v1.0/users/${driveRoot}/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
     { values: [[text, timestamp]] },
     {
       headers: {

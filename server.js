@@ -32,8 +32,8 @@ const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const worksheetName = process.env.WORKSHEET_NAME;
-const userID = process.env.USER_ID;
-const driveRoot = process.env.USE_ME_ENDPOINT === 'true' ? 'me' : 'users/${userID}';
+const useMeEndpoint = process.env.USE_ME_ENDPOINT === 'true';
+const driveRoot = useMeEndpoint ? 'me' : 'users/${process.env.USER_ID}';
 
 let accessToken = '';
 

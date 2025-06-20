@@ -56,18 +56,18 @@ async function addToExcel(text) {
   await getAccessToken();
   console.log(`Uploading to: QRData.xlsx → worksheet '${worksheetName}'`);
 
-  // Try to add table (ignore error if it exists)
+  // Create table (ignore if it already exists)
   await axios.post(
-    'https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/...',
-    { address: 'A2:B2', hasHeaders: true },
-    { headers: { Authorization: `Bearer ${accessToken}` } },
+    `https://graph.microsoft.com/v1.0/users/${userID}/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
+    { address: 'A1:B1', hasHeaders: true },
+    { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {
     console.error('Table creation error:', err?.response?.data || err.message);
   });
 
-  // Add a row
+  // Add row
   const res = await axios.post(
-    `https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
+    `https://graph.microsoft.com/v1.0/users/${userID}/drive/root:/QRData.xlsx:/workbook/tables/1/rows/add`,
     { values: [[text, timestamp]] },
     {
       headers: {

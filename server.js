@@ -57,7 +57,7 @@ async function addToExcel(text) {
 
   // Try to add table (ignore error if it exists)
   await axios.post(
-    `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/worksheets('${worksheetName}')/tables/add`,
+    https://graph.microsoft.com/v1.0/users/{a9b870bb-876f-4623-90d6-e10e964e3eef}/drive/...
     { address: 'A1:B1', hasHeaders: true },
     { headers: { Authorization: `Bearer ${accessToken}` } }
   ).catch(err => {

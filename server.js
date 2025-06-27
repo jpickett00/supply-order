@@ -34,6 +34,7 @@ const clientSecret = process.env.CLIENT_SECRET;
 const worksheetName = process.env.WORKSHEET_NAME;
 const useMeEndpoint = process.env.USE_ME_ENDPOINT === 'true';
 const driveRoot = useMeEndpoint ? 'me' : 'users/${process.env.USER_ID}';
+const userID = process.env.USER_ID;
 
 let accessToken = '';
 

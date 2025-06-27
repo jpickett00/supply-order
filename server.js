@@ -61,7 +61,7 @@ async function addToExcel(text) {
 
   // Add row
   const res = await axios.post(
-  `https://graph.microsoft.com/v1.0/users/${userid}/drive/root:/QRData.xlsx:/workbook/tables('068431C4-2B7E-41E5-A544-1E2279F392B1')/rows/add`,
+  `https://graph.microsoft.com/v1.0/users/83e1c8f3-e7ef-4625-8db0-b51bc3b9466f/drive/root:/QRData.xlsx:/workbook/tables/Table1/rows/add`,
   { values: [[text, timestamp]] },
   {
     headers: {

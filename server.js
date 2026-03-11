@@ -2,13 +2,21 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from URL
 
 dotenv.config();
+
+const __filename =
+fileURLTopath(import.meta.url);
+const __dirname =
+path.dirname(__filename):
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 const tenantId = process.env.TENANT_ID;
 const clientId = process.env.CLIENT_ID;

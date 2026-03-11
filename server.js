@@ -3,7 +3,7 @@ import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from URL
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 

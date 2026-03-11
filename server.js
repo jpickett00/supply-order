@@ -72,6 +72,7 @@ async function addToExcel(text) {
       }
     }
   );
+}
 
 // API endpoint
 app.post('/upload', async (req, res) => {

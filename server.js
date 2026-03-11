@@ -29,7 +29,6 @@ let accessToken = "";
 
 async function getAccessToken() {
   const response = await axios.post(
-    `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
     new URLSearchParams({
       client_id: clientId,
       scope: "https://graph.microsoft.com/.default",

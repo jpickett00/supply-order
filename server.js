@@ -10,7 +10,7 @@ dotenv.config();
 const __filename =
 fileURLTopath(import.meta.url);
 const __dirname =
-path.dirname(__filename):
+path.dirname(__filename);
 
 const app = express();
 

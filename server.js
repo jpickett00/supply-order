@@ -55,24 +55,23 @@ async function getAccessToken() {
 // Upload QR data to Excel
 async function addToExcel(text) {
   const timestamp = new Date().toLocaleString();
+
   await getAccessToken();
-  console.log(`Uploading to: QRData.xlsx → worksheet '${worksheetName}'`);
 
+  console.log("Uploading QR scan to Excel...");
 
-  // Add row
-  const res = await axios.post(
-  `https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/Table1/rows/add`,
-  { values: [[text, timestamp]] },
-  {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
+  const response = await axios.post(
+    "https://graph.microsoft.com/v1.0/me/drive/root:/QRData.xlsx:/workbook/tables/Table1/rows/add",
+    {
+      values: [[text, timestamp]]
     },
-  }
-);
-
-  return res.status;
-}
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
 
 // API endpoint
 app.post('/upload', async (req, res) => {
